@@ -150,17 +150,21 @@ class DeviceCodes( Enum ):
     KBIO_DEV_VSP300 = 20
     KBIO_DEV_SP200 = 21
     KBIO_DEV_MPG2 = 22
-    KBIO_DEV_ND1 = 23
-    KBIO_DEV_ND2 = 24
-    KBIO_DEV_ND3 = 25
-    KBIO_DEV_ND4 = 26
+    KBIO_DEV_SP100 = 23
+    KBIO_DEV_MOSLED = 24
+    KBIO_DEV_KINEXXX = 25
+    KBIO_DEV_BCS815 = 26
     KBIO_DEV_SP240 = 27
     KBIO_DEV_MPG205 = 28
     KBIO_DEV_MPG210 = 29
     KBIO_DEV_MPG220 = 30
     KBIO_DEV_MPG240 = 31
+    KBIO_DEV_BP300 = 32
+    KBIO_DEV_VMP3E = 33
+    KBIO_DEV_VSP3E = 34
+    KBIO_DEV_SP50E = 35
+    KBIO_DEV_SP150E = 36
     KBIO_DEV_UNKNOWN = 255
-
 
 class DeviceCodeDescriptions( Enum ):
     """
@@ -189,15 +193,20 @@ class DeviceCodeDescriptions( Enum ):
     KBIO_DEV_VSP300 = 'VSP-300 device'
     KBIO_DEV_SP200 = 'SP-200 device'
     KBIO_DEV_MPG2 = 'MPG2 device'
-    KBIO_DEV_ND1 = 'RESERVED'
-    KBIO_DEV_ND2 = 'RESERVED'
-    KBIO_DEV_ND3 = 'RESERVED'
-    KBIO_DEV_ND4 = 'RESERVED'
+    KBIO_DEV_SP100 = 'SP-100 device'
+    KBIO_DEV_MOSLED = 'MOSLED device'
+    KBIO_DEV_KINEXXX = 'KINEXXX device'
+    KBIO_DEV_BCS815 = 'BCS-815 device'
     KBIO_DEV_SP240 = 'SP-240 device'
     KBIO_DEV_MPG205 = 'MPG-205 (VMP3)'
     KBIO_DEV_MPG210 = 'MPG-210 (VMP3)'
     KBIO_DEV_MPG220 = 'MPG-220 (VMP3)'
     KBIO_DEV_MPG240 = 'MPG-240 (VMP3)'
+    KBIO_DEV_BP300 = 'BP-300 device'
+    KBIO_DEV_VMP3E = 'VMP-3E device'
+    KBIO_DEV_VSP3E = 'VSP-3E device'
+    KBIO_DEV_SP50E = 'SP-50E device'
+    KBIO_DEV_SP150E = 'SP-150E device'
     KBIO_DEV_UNKNOWN = 'Unknown device'
 
 
@@ -345,18 +354,18 @@ class DeviceInfo( c.Structure ):
     Stores information about a device.
     """
     _fields_ = [
-        ( "DeviceCode",        c.c_int32 ),
-        ( "RAMSize",           c.c_int32 ),
-        ( "CPU",               c.c_int32 ),
-        ( "NumberOfChannels",  c.c_int32 ),
-        ( "NumberOfSlots",     c.c_int32 ),
-        ( "FirmwareVersion",   c.c_int32 ),
-        ( "FirmwareDate_yyyy", c.c_int32 ),
-        ( "FirmwareDate_mm",   c.c_int32 ),
-        ( "FirmwareDate_dd",   c.c_int32 ),
-        ( "HTdisplayOn",       c.c_int32 ),
-        ( "NbOfConnectedPC",   c.c_int32 )
-    ];
+        ( 'DeviceCode',         c.c_int32 ),
+        ( 'RAMSize',            c.c_int32 ),
+        ( 'CPU',                c.c_int32 ),
+        ( 'NumberOfChannels',   c.c_int32 ),
+        ( 'NumberOfSlots',      c.c_int32 ),
+        ( 'FirmwareVersion',    c.c_int32 ),
+        ( 'FirmwareDate_yyyy',  c.c_int32 ),
+        ( 'FirmwareDate_mm',    c.c_int32 ),
+        ( 'FirmwareDate_dd',    c.c_int32 ),
+        ( 'HTdisplayOn',        c.c_int32 ),
+        ( 'NbOfConnectedPC',    c.c_int32 )
+    ]
 
 
 class ChannelInfo( c.Structure ):
@@ -364,24 +373,25 @@ class ChannelInfo( c.Structure ):
     Stores information of a channel.
     """
     _fields_ = [
-        ( 'Channel',            c.c_int32 ),
-        ( 'BoardVersion',       c.c_int32 ),
-        ( 'BoardSerialNumber',  c.c_int32 ),
-        ( 'FirmwareVersion',    c.c_int32 ),
-        ( 'XilinxVersion',      c.c_int32 ),
-        ( 'AmpCode',            c.c_int32 ),
-        ( 'NbAmps',             c.c_int32 ),
-        ( 'Lcboard',            c.c_int32 ),
-        ( 'Zboard',             c.c_int32 ),
-        ( 'RESERVED',           c.c_int32 ),
-        ( 'RESERVED',           c.c_int32 ),
-        ( 'MemSize',            c.c_int32 ),
-        ( 'State',              c.c_int32 ),
-        ( 'MaxIRange',          c.c_int32 ),
-        ( 'MinIRange',          c.c_int32 ),
-        ( 'MaxBandwidth',       c.c_int32 ),
-        ( 'NbOfTechniques',     c.c_int32 )
-
+        ( 'Channel',            c.c_int32 ),  # Channel (0..15)
+        ( 'BoardVersion',       c.c_int32 ),  # Board version
+        ( 'BoardSerialNumber',  c.c_int32 ),  # Board serial number
+        ( 'FirmwareCode',       c.c_int32 ),  # Identifier of the firmware loaded on the channel
+        ( 'FirmwareVersion',    c.c_int32 ),  # Firmware version
+        ( 'XilinxVersion',      c.c_int32 ),  # Xilinx version
+        ( 'AmpCode',            c.c_int32 ),  # Amplifier code
+        ( 'NbAmps',             c.c_int32 ),  # Number of amplifiers (0..16)
+        ( 'Lcboard',            c.c_int32 ),  # Low current presence
+        ( 'Zboard',             c.c_int32 ),  # Impedance capabilities
+        ( 'MUXboard',           c.c_int32 ),  # MEA mux
+        ( 'GPRAboard',          c.c_int32 ),  # Analog ramp
+        ( 'MemSize',            c.c_int32 ),  # Memory size (in bytes)
+        ( 'MemFilled',          c.c_int32 ),  # Memory filled (in bytes)
+        ( 'State',              c.c_int32 ),  # Channel state : run/stop/pause
+        ( 'MaxIRange',          c.c_int32 ),  # Maximum I range allowed
+        ( 'MinIRange',          c.c_int32 ),  # Minimum I range allowed
+        ( 'MaxBandwidth',       c.c_int32 ),  # Maximum bandwidth allowed
+        ( 'NbOfTechniques',     c.c_int32 )   # Number of techniques loaded
     ]
 
 
