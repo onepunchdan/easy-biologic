@@ -150,10 +150,10 @@ class DeviceCodes( Enum ):
     KBIO_DEV_VSP300 = 20
     KBIO_DEV_SP200 = 21
     KBIO_DEV_MPG2 = 22
-    KBIO_DEV_ND1 = 23
-    KBIO_DEV_ND2 = 24
-    KBIO_DEV_ND3 = 25
-    KBIO_DEV_ND4 = 26
+    KBIO_DEV_SP100 = 23
+    KBIO_DEV_MOSLED = 24
+    KBIO_DEV_KINEXXX = 25
+    KBIO_DEV_BCS815 = 26
     KBIO_DEV_SP240 = 27
     KBIO_DEV_MPG205 = 28
     KBIO_DEV_MPG210 = 29
@@ -165,7 +165,6 @@ class DeviceCodes( Enum ):
     KBIO_DEV_SP50E = 35
     KBIO_DEV_SP150E = 36
     KBIO_DEV_UNKNOWN = 255
-
 
 class DeviceCodeDescriptions( Enum ):
     """
@@ -194,10 +193,10 @@ class DeviceCodeDescriptions( Enum ):
     KBIO_DEV_VSP300 = 'VSP-300 device'
     KBIO_DEV_SP200 = 'SP-200 device'
     KBIO_DEV_MPG2 = 'MPG2 device'
-    KBIO_DEV_ND1 = 'RESERVED'
-    KBIO_DEV_ND2 = 'RESERVED'
-    KBIO_DEV_ND3 = 'RESERVED'
-    KBIO_DEV_ND4 = 'RESERVED'
+    KBIO_DEV_SP100 = 'SP-100 device'
+    KBIO_DEV_MOSLED = 'MOSLED device'
+    KBIO_DEV_KINEXXX = 'KINEXXX device'
+    KBIO_DEV_BCS815 = 'BCS-815 device'
     KBIO_DEV_SP240 = 'SP-240 device'
     KBIO_DEV_MPG205 = 'MPG-205 (VMP3)'
     KBIO_DEV_MPG210 = 'MPG-210 (VMP3)'
