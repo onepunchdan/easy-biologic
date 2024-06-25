@@ -1474,7 +1474,8 @@ class JV_Scan( BiologicProgram ):
             'start': 0,
             'step':  0.01,
             'rate':  0.01,
-            'average': False
+            'average': False,
+            'cycles': 0
         }
         channels = kwargs[ 'channels' ] if ( 'channels' in kwargs ) else None
         params = set_defaults( params, defaults, channels )
@@ -1493,16 +1494,24 @@ class JV_Scan( BiologicProgram ):
             dp.VMP3_Fields.CV
         )
 
-        self.field_titles = [ 'Voltage [V]', 'Current [A]', 'Power [W]' ]
+        self.field_titles = [ 'Time [s]', 'Voltage [V]', 'Current [A]', 'Power [W]', 'Cycle' ]
         
         self._fields = namedtuple( 'CV_Datum', [
-           'voltage', 'current', 'power'
+           'time', 'voltage', 'current', 'power', 'cycle'
         ] )
 
         self._field_values = lambda datum, segment: (
+            dp.calculate_time(
+                datum.t_high,
+                datum.t_low,
+                segment.info,
+                segment.values
+            ),
+            
             datum.voltage,
             datum.current,
-            datum.voltage* datum.current  # power
+            datum.voltage* datum.current,  # power
+            datum.cycle
         )
 
 
@@ -1524,7 +1533,7 @@ class JV_Scan( BiologicProgram ):
                 'Scan_number':  2,
                 'Record_every_dE':   ch_params[ 'step' ],
                 'Average_over_dE':   ch_params[ 'average' ],
-                'N_Cycles':          0,
+                'N_Cycles':          ch_params[ 'cycles' ],
                 'Begin_measuring_I': 0, # start measurement at beginning of interval
                 'End_measuring_I':   1  # finish measurement at end of interval
             }
