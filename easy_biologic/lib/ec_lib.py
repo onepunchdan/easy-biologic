@@ -612,6 +612,9 @@ BL_GetData.restype = c.c_int32
 BL_ConvertNumericIntoSingle = __dll[ 'BL_ConvertNumericIntoSingle' ]
 BL_ConvertNumericIntoSingle.restype = c.c_int32
 
+BL_ConvertTimeChannelNumericIntoSeconds = __dll[ 'BL_ConvertTimeChannelNumericIntoSeconds' ]
+BL_ConvertTimeChannelNumericIntoSeconds.restype = c.c_int32
+
 
 # async methods
 methods = [
@@ -635,7 +638,8 @@ methods = [
 
     # data functions
     BL_GetCurrentValues,
-    BL_GetData
+    BL_GetData,
+    BL_ConvertTimeChannelNumericIntoSeconds
 ]
 
 # To handle asyncio.coroutine removal in Python 3.11

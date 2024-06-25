@@ -1525,6 +1525,13 @@ class CV( BiologicProgram ):
         ] )
 
         self._field_values = lambda datum, segment: (
+            dp.calculate_time(
+                datum.t_high,
+                datum.t_low,
+                segment.info,
+                segment.values
+            ),
+            
             datum.voltage,
             datum.current,
             dp.calculate_time(
