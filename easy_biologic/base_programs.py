@@ -1472,6 +1472,9 @@ class JV_Scan( BiologicProgram ):
         # defaults
         defaults = {
             'start': 0,
+            'v1': 0.1,
+            'v2': 0,
+            'end': 0,
             'step':  0.01,
             'rate':  0.01,
             'average': False,
@@ -1523,8 +1526,7 @@ class JV_Scan( BiologicProgram ):
         # setup scan profile ( start -> end -> start )
         params = {}
         for ch, ch_params in self.params.items():
-            voltage_profile = [ ch_params[ 'start' ] ]* 5
-            voltage_profile[ 1 ] = ch_params[ 'end' ]
+            voltage_profile = [ ch_params[ k ] for k in ( 'start', 'v1', 'v2', 'start', 'end' ) ]
 
             params[ ch ] = {
                 'vs_initial':   [ False ]* 5,
