@@ -72,6 +72,7 @@ from collections import namedtuple
 
 from .lib import ec_lib as ecl
 from .lib import data_parser as dp
+from .lib import technique_fields as tfs
 
 # Try to import pandas for faster file writing
 try:
@@ -516,6 +517,67 @@ class BiologicProgram( ABC ):
             if self.autoconnect is True:
                 self._disconnect()
 
+    def _run_recv_trig( self, technique, params, read_interval = 1, retrieve_data = True, trigger_logic = 1 ):
+        """
+        Runs the program after receiving an input trigger.
+
+        :param technqiue: Name of technique.
+        :param params: Technique parameters.
+        :param read_interval: Time between data fetches. [Default: 1]
+        :param retrieve_data: Whether data should be retrieved or not.
+            self.field_values must be valid.
+            [Default: True]
+        """
+        # run technique
+        if self.autoconnect:
+            self._connect()
+
+        for ch, ch_params in params.items():
+            self.device.load_techniques(
+                ch,
+                ['TI', technique],
+                [{'Trigger_Logic': trigger_logic}, ch_params],
+                types = [tfs.TI, self._parameter_types]
+            )
+
+        self.device.start_channels( self.channels )
+
+        if retrieve_data:
+            asyncio.run( self._retrieve_data( read_interval ) )
+
+            if self.autoconnect is True:
+                self._disconnect()
+
+    def _run_send_trig( self, technique, params, read_interval = 1, retrieve_data = True, trigger_logic = 1, trigger_duration = 1.0 ):
+        """
+        Runs the program with output trigger.
+
+        :param technqiue: Name of technique.
+        :param params: Technique parameters.
+        :param read_interval: Time between data fetches. [Default: 1]
+        :param retrieve_data: Whether data should be retrieved or not.
+            self.field_values must be valid.
+            [Default: True]
+        """
+        # run technique
+        if self.autoconnect:
+            self._connect()
+
+        for ch, ch_params in params.items():
+            self.device.load_techniques(
+                ch,
+                ['TO', technique],
+                [{'Trigger_Logic': trigger_logic, 'Trigger_Duration': trigger_duration}, ch_params],
+                types = [tfs.TO, self._parameter_types]
+            )
+
+        self.device.start_channels( self.channels )
+
+        if retrieve_data:
+            asyncio.run( self._retrieve_data( read_interval ) )
+
+            if self.autoconnect is True:
+                self._disconnect()
 
     async def _retrieve_data_segment( self, channel ):
         """

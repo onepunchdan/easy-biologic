@@ -115,3 +115,12 @@ class GEIS( Enum ):
     Correction           = bool
     Wait_for_steady      = float
     I_Range              = int
+
+
+class TO( Enum ):
+    Trigger_Logic        = int
+    Trigger_Duration     = float
+
+
+class TI( Enum ):
+    Trigger_Logic        = int
