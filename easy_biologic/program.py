@@ -486,7 +486,7 @@ class BiologicProgram( ABC ):
             self.device.disconnect()
 
 
-    def _run( self, technique, params, read_interval = 1, retrieve_data = True ):
+    def _run( self, technique, params, read_interval = 1, retrieve_data = True, ttl = 'none', ttl_logic = 1, ttl_duration = 1.0 ):
         """
         Runs the program.
 
@@ -502,75 +502,21 @@ class BiologicProgram( ABC ):
             self._connect()
 
         for ch, ch_params in params.items():
-            self.device.load_technique(
-                ch,
-                technique,
-                ch_params,
-                types = self._parameter_types
-            )
-
-        self.device.start_channels( self.channels )
-
-        if retrieve_data:
-            asyncio.run( self._retrieve_data( read_interval ) )
-
-            if self.autoconnect is True:
-                self._disconnect()
-
-    def _run_recv_trig( self, technique, params, read_interval = 1, retrieve_data = True, trigger_logic = 1 ):
-        """
-        Runs the program after receiving an input trigger.
-
-        :param technqiue: Name of technique.
-        :param params: Technique parameters.
-        :param read_interval: Time between data fetches. [Default: 1]
-        :param retrieve_data: Whether data should be retrieved or not.
-            self.field_values must be valid.
-            [Default: True]
-        """
-        # run technique
-        if self.autoconnect:
-            self._connect()
-
-        for ch, ch_params in params.items():
-            self.device.load_techniques(
-                ch,
-                ['TI', technique],
-                [{'Trigger_Logic': trigger_logic}, ch_params],
-                types = [tfs.TI, self._parameter_types]
-            )
-
-        self.device.start_channels( self.channels )
-
-        if retrieve_data:
-            asyncio.run( self._retrieve_data( read_interval ) )
-
-            if self.autoconnect is True:
-                self._disconnect()
-
-    def _run_send_trig( self, technique, params, read_interval = 1, retrieve_data = True, trigger_logic = 1, trigger_duration = 1.0 ):
-        """
-        Runs the program with output trigger.
-
-        :param technqiue: Name of technique.
-        :param params: Technique parameters.
-        :param read_interval: Time between data fetches. [Default: 1]
-        :param retrieve_data: Whether data should be retrieved or not.
-            self.field_values must be valid.
-            [Default: True]
-        """
-        # run technique
-        if self.autoconnect:
-            self._connect()
-
-        for ch, ch_params in params.items():
-            self.device.load_techniques(
-                ch,
-                ['TO', technique],
-                [{'Trigger_Logic': trigger_logic, 'Trigger_Duration': trigger_duration}, ch_params],
-                types = [tfs.TO, self._parameter_types]
-            )
-
+            if ttl not in ['in', 'out']:
+                self.device.load_technique(
+                    ch,
+                    technique,
+                    ch_params,
+                    types = self._parameter_types
+                )
+            else:
+                ttl_tech, ttl_param_type = ('TI', tfs.TI) if ttl=='in' else ('TO', tfs.TO)
+                self.device.load_techniques(
+                    ch,
+                    [ttl_tech, technique],
+                    [{'Trigger_Logic': ttl_logic, 'Trigger_Duration': ttl_duration}, ch_params],
+                    types = [ttl_param_type, self._parameter_types]
+                )
         self.device.start_channels( self.channels )
 
         if retrieve_data:
