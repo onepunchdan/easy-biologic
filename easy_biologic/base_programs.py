@@ -546,7 +546,7 @@ class OCV( BiologicProgram ):
         )
 
 
-    def run( self, retrieve_data = True ):
+    def run( self, retrieve_data = True, ttl_params = {} ):
         """
         :param retrieve_data: Automatically retrieve and disconenct form device.
             [Default: True]
@@ -561,7 +561,7 @@ class OCV( BiologicProgram ):
         params.update( map_hardware_params(self.params) )
 
         # run technique
-        self._run( 'ocv', params, retrieve_data = retrieve_data )
+        self._run( 'ocv', params, retrieve_data = retrieve_data, **ttl_params )
 
 
 class CA( BiologicProgram ):
@@ -645,7 +645,7 @@ class CA( BiologicProgram ):
         )
 
 
-    def run( self, retrieve_data = True ):
+    def run( self, retrieve_data = True, ttl_params = {} ):
         """
         :param retrieve_data: Automatically retrieve and disconnect from device.
             [Default: True]
@@ -665,7 +665,7 @@ class CA( BiologicProgram ):
             params[ ch ].update( map_hardware_params( ch_params, by_channel=False ) )
 
         # run technique
-        data = self._run( 'ca', params, retrieve_data = retrieve_data )
+        data = self._run( 'ca', params, retrieve_data = retrieve_data, **ttl_params )
 
 
     def update_voltages(
@@ -802,7 +802,7 @@ class CP( BiologicProgram ):
         )
 
 
-    def run( self, retrieve_data = True ):
+    def run( self, retrieve_data = True, ttl_params = {} ):
         """
         :param retrieve_data: Automatically retrieve and disconenct form device.
             [Default: True]
@@ -822,7 +822,7 @@ class CP( BiologicProgram ):
             params[ ch ].update( map_hardware_params( ch_params, by_channel=False ) )
 
         # run technique
-        data = self._run( 'cp', params, retrieve_data = retrieve_data )
+        data = self._run( 'cp', params, retrieve_data = retrieve_data, **ttl_params )
 
 
     def update_currents(
@@ -968,7 +968,7 @@ class CALimit( BiologicProgram ):
         )
 
 
-    def run( self, retrieve_data = True ):
+    def run( self, retrieve_data = True, ttl_params = {} ):
         """
         :param retrieve_data: Automatically retrieve and disconnect from device.
             [Default: True]
@@ -1001,7 +1001,7 @@ class CALimit( BiologicProgram ):
             params[ ch ].update( map_hardware_params( ch_params, by_channel=False ) )
 
         # run technique
-        data = self._run( 'calimit', params, retrieve_data = retrieve_data )
+        data = self._run( 'calimit', params, retrieve_data = retrieve_data, **ttl_params )
 
 
     def update_voltages(
@@ -1219,7 +1219,7 @@ class PEIS( BiologicProgram ):
         self._field_values = _peis_fields
 
 
-    def run( self, retrieve_data = True ):
+    def run( self, retrieve_data = True, ttl_params = {} ):
         """
         :param retrieve_data: Automatically retrieve and disconnect from device.
             [Default: True]
@@ -1247,7 +1247,7 @@ class PEIS( BiologicProgram ):
             params[ ch ].update( map_hardware_params( ch_params, by_channel=False ) )
 
         # run technique
-        data = self._run( 'peis', params, retrieve_data = retrieve_data )
+        data = self._run( 'peis', params, retrieve_data = retrieve_data, **ttl_params )
 
 class GEIS( BiologicProgram ):
     """
@@ -1416,7 +1416,7 @@ class GEIS( BiologicProgram ):
         self._field_values = _geis_fields
 
 
-    def run( self, retrieve_data = True ):
+    def run( self, retrieve_data = True, ttl_params = {} ):
         """
         :param retrieve_data: Automatically retrieve and disconenct from device.
             [Default: True]
@@ -1545,7 +1545,7 @@ class CV( BiologicProgram ):
         )
 
 
-    def run( self, retrieve_data = True ):
+    def run( self, retrieve_data = True, **ttl_params ):
         """
         :param retrieve_data: Automatically retrieve and disconenct form device.
             [Default: True]
@@ -1702,7 +1702,7 @@ class MPP_Tracking( CALimit ):
         self._cb_timeout.append( callback )
 
 
-    def run( self, folder = None, by_channel = False ):
+    def run( self, folder = None, by_channel = False, ttl_params = {} ):
         """
         :param folder: Folder or file for saving data or
             None if automatic saving is not desired.
@@ -1714,7 +1714,7 @@ class MPP_Tracking( CALimit ):
         for cb in self._cb_timeout:
             cb.start()
 
-        super().run( retrieve_data = False )
+        super().run( retrieve_data = False, **ttl_params )
         self._hold_and_probe( folder, by_channel = by_channel )  # hold and probe
 
         # program end
@@ -1926,7 +1926,7 @@ class MPP( MPP_Tracking ):
         self._techniques = [ 'ocv', 'cv', 'ca' ]
 
 
-    def run( self, data = 'data', by_channel = False, cv = {} ):
+    def run( self, data = 'data', by_channel = False, cv = {}, ttl_params = {} ):
         """
         :param data: Data folder path. [Default: 'data']
         :param by_channel: Save data by channel. [Defualt: False]
@@ -1964,7 +1964,7 @@ class MPP( MPP_Tracking ):
             time_stamp, self.channels
         ), flush = True )
 
-        super().run( mpp_loc ) # mpp tracking
+        super().run( mpp_loc, ttl_params=ttl_params ) # mpp tracking
 
     #--- helper functions ---
 
@@ -2117,7 +2117,7 @@ class MPP_Cycles( MPP ):
         self.cycle = None
 
 
-    def run( self, data = 'data', by_channel = False, cv = {} ):
+    def run( self, data = 'data', by_channel = False, cv = {}, ttl_params = {} ):
         """
         :param data: Data folder path. [Default: 'data']
         :param by_channel: Save data by channel. [Default: False]
@@ -2128,11 +2128,11 @@ class MPP_Cycles( MPP ):
         cycles_max = max( cycles.values() )
 
         while self.cycle < cycles_max:
-            self._run_mpp_cycle( self.cycle, data, by_channel = by_channel )
+            self._run_mpp_cycle( self.cycle, data, by_channel = by_channel, ttl_params = ttl_params )
             self.cycle += 1
 
 
-    def _run_mpp_cycle( self, cycle, folder, by_channel = False ):
+    def _run_mpp_cycle( self, cycle, folder, by_channel = False, ttl_params = {} ):
         cycle_path = 'cycle-{:02.0f}'.format( cycle )
         folder = os.path.join( folder, cycle_path )
 
@@ -2149,7 +2149,7 @@ class MPP_Cycles( MPP ):
             time_stamp, cycle, self.channels
         ), flush = True )
 
-        super().run( folder, by_channel = by_channel )
+        super().run( folder, by_channel = by_channel, ttl_params=ttl_params )
         
         
 def get_current_range( i_max ):
