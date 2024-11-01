@@ -1445,7 +1445,7 @@ class GEIS( BiologicProgram ):
             params[ ch ].update( map_hardware_params( ch_params, by_channel=False ) )
 
         # run technique
-        data = self._run( 'geis', params, retrieve_data = retrieve_data )
+        data = self._run( 'geis', params, retrieve_data = retrieve_data, **ttl_params )
 
 
 class CV( BiologicProgram ):
@@ -1545,7 +1545,7 @@ class CV( BiologicProgram ):
         )
 
 
-    def run( self, retrieve_data = True, **ttl_params ):
+    def run( self, retrieve_data = True, ttl_params = {} ):
         """
         :param retrieve_data: Automatically retrieve and disconenct form device.
             [Default: True]
@@ -1580,7 +1580,7 @@ class CV( BiologicProgram ):
             params[ ch ].update( map_hardware_params( ch_params, by_channel=False ) )
 
         # run technique
-        data = self._run( 'cv', params, retrieve_data = retrieve_data )
+        data = self._run( 'cv', params, retrieve_data = retrieve_data, **ttl_params )
 
 
 MPP_Powers = namedtuple( 'MPP_Powers', [ 'hold', 'probe' ] )
@@ -1950,7 +1950,7 @@ class MPP( MPP_Tracking ):
             self._connect()
 
         #--- init ---
-        self.voc = self._run_ocv( ocv_loc, by_channel = by_channel ) # voc
+        self.voc = self._run_ocv( ocv_loc, by_channel = by_channel, ttl_params = ttl_params ) # voc
         self.v_mpp = self._run_cv( self.voc, cv_loc, by_channel = by_channel, cv_params = cv_params ) # cv
 
         for ch, ch_params in self.params.items():
@@ -1991,7 +1991,7 @@ class MPP( MPP_Tracking ):
                 raise err
 
 
-    def _run_ocv( self, file, by_channel = False ):
+    def _run_ocv( self, file, by_channel = False, ttl_params = {} ):
         """
         Runs an OCV program to find the voc for each channel.
 
@@ -2014,7 +2014,7 @@ class MPP( MPP_Tracking ):
             threaded = self._threaded
         )
 
-        ocv_pg.run()
+        ocv_pg.run(ttl_params=ttl_params)
         ocv_pg.save_data( file, by_channel = by_channel )
 
         voc = {
