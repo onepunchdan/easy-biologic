@@ -329,13 +329,13 @@ class CallBack_Timeout:
 
         # internal trackers
         self.__calls += 1
-        if self.timeout_type is 'interval':
+        if self.timeout_type == 'interval':
             self.__last_call = time.time()
 
         # callback
         cb( self.__program, *args, **kwargs )
 
-        if self.timeout_type is 'between':
+        if self.timeout_type == 'between':
             self.__last_call = time.time()
 
 
@@ -1097,10 +1097,10 @@ class PEIS( BiologicProgram ):
         """
         # set sweep to false if spacing is logarithmic
         if 'sweep' in params:
-            if params.sweep is 'log':
+            if params.sweep == 'log':
                 params.sweep = False
 
-            elif params.sweep is 'lin':
+            elif params.sweep == 'lin':
                 params.sweep = True
 
             else:
@@ -1287,10 +1287,10 @@ class GEIS( BiologicProgram ):
         """
         # set sweep to false if spacing is logarithmic
         if 'sweep' in params:
-            if params.sweep is 'log':
+            if params.sweep == 'log':
                 params.sweep = False
 
-            elif params.sweep is 'lin':
+            elif params.sweep == 'lin':
                 params.sweep = True
 
             else:
@@ -1782,7 +1782,7 @@ class MPP_Tracking( CALimit ):
                 self._hold_and_retrieve( hold_time )
             )
 
-            if len( self.active_channels ) is 0:
+            if len( self.active_channels ) == 0:
                 # program end
                 break
 
@@ -1797,7 +1797,7 @@ class MPP_Tracking( CALimit ):
                 self._hold_and_retrieve( probe_time )
             )
 
-            if len( self.active_channels ) is 0:
+            if len( self.active_channels ) == 0:
                 # program end
                 break
 
