@@ -290,7 +290,8 @@ class BiologicDevice:
         if types is not None:
             params = ecl.cast_parameters( params, types )
 
-        ecc_params = ecl.create_parameters( params, index )
+        ecc_params = ecl.create_parameters( params, self.next_pindex )
+        self.next_pindex += ecc_params.len
         technique = ecl.technique_file( technique, self.kind )
 
         ecl.load_technique(
@@ -316,6 +317,7 @@ class BiologicDevice:
             [Default: None]
         """
         self._validate_connection()
+        self.next_pindex = 0
 
         for index, technique in enumerate( techniques ):
             params = parameters[ index ]
