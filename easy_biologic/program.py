@@ -486,7 +486,7 @@ class BiologicProgram( ABC ):
             self.device.disconnect()
 
 
-    def _run( self, technique, params, read_interval = 1, retrieve_data = True, ttl = 'none', ttl_logic = 1, ttl_duration = 1.0 ):
+    def _run( self, technique, params, read_interval = 1, retrieve_data = True, ttl = 'none', ttl_logic = 1 ):
         """
         Runs the program.
 
@@ -511,13 +511,14 @@ class BiologicProgram( ABC ):
                     types = self._parameter_types
                 )
             else:
-                ttl_tech, ttl_param_type = ('TI', tfs.TI) if ttl=='in' else ('TO', tfs.TO)
+                ttl_tech, ttl_param_type = ('TI', tfs.TI) if ttl=='in' else ('TOS', tfs.TOS)
                 print(f"!!! specified TTL {ttl}, loading TTL technique before measurement !!!")
+                logic = {'Trigger_Logic': ttl_logic}
                 self.device.load_techniques(
                     ch,
-                    [ttl_tech, technique],
-                    [{'Trigger_Logic': ttl_logic, 'Trigger_Duration': ttl_duration}, ch_params],
-                    types = [ttl_param_type, self._parameter_types]
+                    [ttl_tech, technique, ttl_tech],
+                    [logic, ch_params, {'Trigger_Logic': 0 if logic['Trigger_Logic'] else 1}],
+                    types = [ttl_param_type, self._parameter_types, ttl_param_type]
                 )
         self.device.start_channels( self.channels )
 

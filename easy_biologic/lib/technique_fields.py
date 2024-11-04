@@ -124,3 +124,7 @@ class TO( Enum ):
 
 class TI( Enum ):
     Trigger_Logic        = int
+
+
+class TOS( Enum ):
+    Trigger_Logic        = int
