@@ -741,7 +741,7 @@ def combine_parameters( params ):
     return params
 
 
-def create_parameters( params, next_pindex = 0, types = None ):
+def create_parameters( params, types = None ):
     """
     Creates an EccParams list of parameters.
 
@@ -769,7 +769,7 @@ def create_parameters( params, next_pindex = 0, types = None ):
 
         for idx, value in enumerate( values ):
             # create parameter for each value
-            param = create_parameter( name, value, next_pindex + idx )
+            param = create_parameter( name, value, idx )
             param_list.append( param )
 
     return combine_parameters( param_list )
