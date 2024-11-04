@@ -503,6 +503,7 @@ class BiologicProgram( ABC ):
 
         for ch, ch_params in params.items():
             if ttl not in ['in', 'out']:
+                print("!!! No TTL specified, running technique immediately !!!")
                 self.device.load_technique(
                     ch,
                     technique,
@@ -511,6 +512,7 @@ class BiologicProgram( ABC ):
                 )
             else:
                 ttl_tech, ttl_param_type = ('TI', tfs.TI) if ttl=='in' else ('TO', tfs.TO)
+                print(f"!!! specified TTL {ttl}, loading TTL technique before measurement !!!")
                 self.device.load_techniques(
                     ch,
                     [ttl_tech, technique],
