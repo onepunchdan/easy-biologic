@@ -530,6 +530,36 @@ class BiologicProgram( ABC ):
             if self.autoconnect is True:
                 self._disconnect()
 
+    def _run_multiple( self, techniques, params, read_interval = 1, retrieve_data = True):
+        """
+        Runs the program.
+
+        :param technqiue: List of names of technique.
+        :param params: Dict of technique parameter lists.
+        :param read_interval: Time between data fetches. [Default: 1]
+        :param retrieve_data: Whether data should be retrieved or not.
+            self.field_values must be valid.
+            [Default: True]
+        """
+        # run technique
+        if self.autoconnect:
+            self._connect()
+
+        for ch, ch_params in params.items():
+            self.device.load_techniques(
+                ch,
+                techniques,
+                ch_params,
+                types = self._parameter_types
+            )
+        self.device.start_channels( self.channels )
+
+        if retrieve_data:
+            asyncio.run( self._retrieve_data( read_interval ) )
+
+            if self.autoconnect is True:
+                self._disconnect()
+
     async def _retrieve_data_segment( self, channel ):
         """
         @async
