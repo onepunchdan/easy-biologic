@@ -1097,11 +1097,11 @@ class PEIS( BiologicProgram ):
         """
         # set sweep to false if spacing is logarithmic
         if 'sweep' in params:
-            if params.sweep == 'log':
-                params.sweep = False
+            if params['sweep'] == 'log':
+                params['sweep'] = False
 
-            elif params.sweep == 'lin':
-                params.sweep = True
+            elif params['sweep'] == 'lin':
+                params['sweep'] = True
 
             else:
                 raise ValueError( 'Invalid sweep parameter' )
@@ -1287,11 +1287,11 @@ class GEIS( BiologicProgram ):
         """
         # set sweep to false if spacing is logarithmic
         if 'sweep' in params:
-            if params.sweep == 'log':
-                params.sweep = False
+            if params['sweep'] == 'log':
+                params['sweep'] = False
 
-            elif params.sweep == 'lin':
-                params.sweep = True
+            elif params['sweep'] == 'lin':
+                params['sweep'] = True
 
             else:
                 raise ValueError( 'Invalid sweep parameter' )
