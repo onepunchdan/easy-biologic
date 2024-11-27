@@ -354,7 +354,7 @@ class BiologicDevice:
         """
         self._validate_connection()
 
-        ecc_params = ecl.create_parameters( parameters, index, types )
+        ecc_params = ecl.create_parameters( parameters, types )
 
         ecl.update_parameters(
             self.idn, ch, technique, ecc_params, index, self.kind
