@@ -2097,7 +2097,7 @@ def configure_limit(
     return LimitConfig(config_int, limit_value)
 
 
-class CAOCV(CA):
+class CAOCV(BiologicProgram):
     """
     Runs a chrono-amperometry technqiue.
     """
@@ -2227,3 +2227,44 @@ class CAOCV(CA):
             retrieve_data=retrieve_data,
             **ttl_params,
         )
+
+    def update_voltages(self, voltages, durations=None, vs_initial=None):
+        """
+        Update voltage and duration parameters
+
+        :param voltages: Dictionary of voltages list keyed by channel,
+            or single voltage to apply to all channels.
+        :param durations: Dictionary of durations list keyed by channel,
+            or single duration to apply to all channels.
+        :param vs_initial: Dictionary of vs. initials list keyed by channel,
+            or single vs. initial boolean to apply to all channels.
+        """
+        # format params
+        if not isinstance(voltages, dict):
+            # transform to dictionary if needed
+            voltages = {ch: voltages for ch in self.channels}
+
+        if (durations is not None) and (not isinstance(durations, dict)):
+            # transform to dictionary if needed
+            durations = {ch: durations for ch in self.channels}
+
+        if (vs_initial is not None) and (not isinstance(vs_initial, dict)):
+            # transform to dictionary if needed
+            vs_initial = {ch: vs_initial for ch in self.channels}
+
+        # update voltages
+        for ch, ch_voltages in voltages.items():
+            if not isinstance(ch_voltages, list):
+                # single voltage given, add to list
+                ch_voltages = [ch_voltages]
+
+            steps = len(ch_voltages)
+            params = {"Voltage_step": ch_voltages, "Step_number": steps - 1}
+
+            if (durations is not None) and (durations[ch]):
+                params["Duration_step"] = durations[ch]
+
+            if (vs_initial is not None) and (vs_initial[ch]):
+                params["vs_initial"] = vs_initial[ch]
+
+            self.device.update_parameters(ch, "ca", params, types=self._parameter_types)
