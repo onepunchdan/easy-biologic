@@ -54,9 +54,9 @@ def parse(data, info, fields=None, device=None):
     if fields is None:
         # get fields from device
         fields = (
-            SP300_Fields[technique]
+            getattr(SP300_Fields, technique.name)
             if ecl.is_in_SP300_family(device.kind)
-            else VMP3_Fields[technique]
+            else getattr(VMP3_Fields, technique.name)
         )
 
     if isinstance(fields, tuple):
