@@ -51,6 +51,9 @@ def parse(data, info, fields=None, device=None):
     cols = info.NbCols
     technique = ecl.TechniqueId(info.TechniqueID)
 
+    if technique.name == 'NONE':
+        return []
+
     if fields is None:
         # get fields from device
         fields = (
