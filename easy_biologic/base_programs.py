@@ -2186,9 +2186,9 @@ class CAOCV(BiologicProgram):
                     datum.t_high, datum.t_low, segment.info, segment.values
                 ),
                 datum.voltage,
-                "NaN",  # no current
-                "NaN",  # no power
-                "NaN",  # no cycle
+                np.nan,  # no current
+                np.nan,  # no power
+                np.nan,  # no cycle
             )
         )
 
