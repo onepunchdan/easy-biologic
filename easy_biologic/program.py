@@ -541,27 +541,53 @@ class BiologicProgram(ABC):
         if self.autoconnect:
             self._connect()
 
-        for ch, ch_params in params.items():
-            if ttl not in ["in", "out"]:
-                self.device.load_techniques(
-                    ch, techniques, ch_params, types=self._parameter_types
-                )
-            else:
-                ttl_tech, ttl_param_type = (
-                    ("TI", tfs.TI) if ttl == "in" else ("TO", tfs.TO)
-                )
-                print(
-                    f"!!! specified TTL {ttl}, loading TTL technique before measurement !!!"
-                )
-                logic = {"Trigger_Logic": ttl_logic}
-                if ttl == "out":
-                    logic["Trigger_Duration"] = ttl_duration
-                self.device.load_techniques(
-                    ch,
-                    [ttl_tech, *techniques],
-                    [logic, *ch_params],
-                    types=[ttl_param_type, *self._parameter_types],
-                )
+        # supply a list of channel-mapped params and rebuild arglist for device.load_techniques()
+        channel = None
+        technique_args: list[str] = techniques
+        param_args: list[dict] = []
+        type_args: list = []
+
+        if ttl in ["in", "out"]:
+            ttl_tech, ttl_param_type = ("TI", tfs.TI) if ttl == "in" else ("TO", tfs.TO)
+            print(
+                f"!!! specified TTL {ttl}, loading TTL technique before measurement !!!"
+            )
+            logic = {"Trigger_Logic": ttl_logic}
+            if ttl == "out":
+                logic["Trigger_Duration"] = ttl_duration
+            technique_args = [ttl_tech] + technique_args
+            param_args.append(logic)
+            type_args.append(ttl_param_type)
+
+        for ch_paramd in params:
+            for ch, ch_params in ch_paramd.items():
+                channel = ch
+                param_args.append(ch_params)
+                type_args.append(None)
+
+        self.device.load_techniques(channel, technique_args, param_args, type_args)
+
+        # for ch, ch_params in params.items():
+        #     if ttl not in ["in", "out"]:
+        #         self.device.load_techniques(
+        #             ch, techniques, ch_params, types=self._parameter_types
+        #         )
+        #     else:
+        #         ttl_tech, ttl_param_type = (
+        #             ("TI", tfs.TI) if ttl == "in" else ("TO", tfs.TO)
+        #         )
+        #         print(
+        #             f"!!! specified TTL {ttl}, loading TTL technique before measurement !!!"
+        #         )
+        #         logic = {"Trigger_Logic": ttl_logic}
+        #         if ttl == "out":
+        #             logic["Trigger_Duration"] = ttl_duration
+        #         self.device.load_techniques(
+        #             ch,
+        #             [ttl_tech, *techniques],
+        #             [logic, *ch_params],
+        #             types=[ttl_param_type, *self._parameter_types],
+        #         )
         self.device.start_channels(self.channels)
 
         if retrieve_data:
